@@ -10,3 +10,6 @@ wheels/
 .venv
 *.db
 **/.DS_Store
+secrets/*
+**/*.env
+.ipynb

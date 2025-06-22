@@ -1,19 +1,6 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
-}
-
 .container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: auto;
     background: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -31,6 +18,13 @@ body {
     font-size: 2.5em;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.sub-header {
+    font-size: 1.2em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .main-content {
@@ -123,6 +117,7 @@ body {
     border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .form-group input:focus, .form-group select:focus {
@@ -143,6 +138,8 @@ body {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    color: #333;
+
 }
 
 .inventory-table th {
@@ -187,10 +184,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
-    /* .main-content {
-        grid-template-columns: 1fr;
-    } */
+/* @media (max-width: 768px) {
     
     .header h1 {
         font-size: 2em;
@@ -199,7 +193,36 @@ body {
     .container {
         margin: 10px;
     }
-}
+
+    .tab-buttons .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .modal-content {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .inventory-controls-container {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .inventory-controls-container .search-form {
+        margin-right: 0;
+    }
+} */
 
 .tab-buttons {
     display: flex;
@@ -211,6 +234,7 @@ body {
     padding: 10px 30px;
     border: none;
     background: #eee;
+    color: #333;
     cursor: pointer;
     font-size: 1.1em;
     border-radius: 8px 8px 0 0;
@@ -224,4 +248,113 @@ body {
 }
 .scanner-section.active, .inventory-section.active {
     display: block;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-title {
+    font-size: 1.8em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.modal-subtitle {
+    font-size: 1.1em;
+    color: #7f8c8d;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .printable-area, .printable-area * {
+        visibility: visible;
+    }
+    .printable-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-actions {
+        display: none;
+    }
+}
+
+.copyable-text {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.copyable-text:hover {
+    background-color: #f0f0f0;
+}
+
+.inventory-controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.inventory-controls-container .search-form {
+    margin-bottom: 0;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.pagination-controls button {
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+.pagination-controls span {
+    font-weight: bold;
+    color: #2c3e50;
+    white-space: nowrap;
 }

@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - db_data:/data
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+      - DB_PATH=../data/inventory.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # 開発用にnode_modulesをマウント対象から除外
+    depends_on:
+      - backend 
+
+volumes:
+  db_data: 

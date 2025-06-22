@@ -1,30 +1,17 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
+from models.config import DATABASE_URL
+from models.schemas import Base
 
-# DB初期化
-def init_db():
-    conn = sqlite3.connect("inventory.db")
-    cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS product (
-        qr_code TEXT PRIMARY KEY,
-        name TEXT NOT NULL
-    )
-    """)
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS inventory (
-        qr_code TEXT PRIMARY KEY,
-        quantity INTEGER NOT NULL,
-        updated_at TEXT NOT NULL
-    )
-    """)
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        qr_code TEXT,
-        action TEXT,
-        quantity INTEGER,
-        timestamp TEXT
-    )
-    """)
-    conn.commit()
-    conn.close()
+
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(bind=engine)
+Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
