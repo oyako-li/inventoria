@@ -13,3 +13,5 @@ wheels/
 secrets/*
 **/*.env
 .ipynb
+data/
+.ipynb_checkpoints/

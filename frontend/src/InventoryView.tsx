@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Product } from "./types";
-import { QRCodeModal, EditModal } from "./components/InventoryModal";
-import Inventory from "./components/Inventory";
+import { useAuth } from "./contexts/AuthContext";
 import './components/Inventory.css';
+import Inventory from "./components/Inventory";
+import InventoryModal from "./components/InventoryModal";
+import AddProductModal from "./components/AddProductModal";
+import QRCodeDisplayModal from "./components/QRCodeDisplayModal";
+import { apiGet, apiPost } from "./utils/api";
 
 interface InventoryViewProps {
     productTable: Product[];
@@ -13,80 +17,92 @@ function InventoryView({
   productTable,
   setProductTable,
 }: InventoryViewProps) {
+  const { getAuthHeaders, user } = useAuth();
   const [itemName, setItemName] = useState("");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem , setSelectedItem] = useState<Product | null>(null);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isQRCodeModalOpen, setIsQRCodeModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const handleOpenModal = (product: Product) => {
+  const handleOpenQRCodeModal = (product: Product) => {
     setSelectedItem(product);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedItem(null);
+    setIsQRCodeModalOpen(true);
   };
 
   const handleDelete = () => {
+    const headers = getAuthHeaders();
     fetch(`/item/${selectedItem?.item_code}`, {
       method: "DELETE",
+      headers,
     })
     .then(res => res.json())
     .then(data => {
       console.log(data);
-      alert("削除しました。");
-      handleCloseModal();
+      // handleCloseModal();
       setProductTable(productTable.filter(product => product.item_code !== selectedItem?.item_code));
       setItemName("");
     });
   };
-  
-  function addProduct(name: string) {
-    const item_name = name.trim();
-    if (item_name === "") {
-      alert("商品名を入力してください。");
-      return;
-    }
-    fetch("/item/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ item_name: item_name, updated_by: "admin" }),
-    })
-    .then(res => res.json())
-    .then(newItem => {
-      setProductTable([{
+
+  const handleAddProduct = async (productData: {
+    item_name: string;
+    description?: string;
+    item_quantity?: number;
+    supplier_id?: number;
+  }) => {
+    const headers = getAuthHeaders();
+    
+    try {
+      const response = await apiPost("/item/", {
+        item_name: productData.item_name,
+        description: productData.description,
+        item_quantity: productData.item_quantity,
+        updated_by: user?.name || 'admin'
+      }, headers);
+
+      if (response.ok) {
+        const newItem = await response.json();
+        setProductTable([{
           ...newItem,
-          current_stock: newItem.item_quantity, // バックエンドからの返却値に合わせる
-      }, ...productTable]);
-      setItemName(""); // 入力欄をクリア
-    })
-    .catch(error => {
+          item_quantity: newItem.item_quantity || productData.item_quantity || 0,
+        }, ...productTable]);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || '商品追加に失敗しました');
+      }
+    } catch (error) {
       console.error("Error adding product:", error);
-      alert(`商品追加に失敗しました。${error.message}`);
-    });
-  }
-
-  const handleEdit = (item: Product) => {
-    setSelectedItem(item);
-    setIsModalOpen(false);
-    setIsEditModalOpen(true);
+      alert(`商品追加に失敗しました。${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw error;
+    }
   };
 
-  const handleEditComplete = (item: Product) => {
-    setProductTable([{
-      ...item,
-      current_stock: item.current_stock,
-    }, ...productTable.filter(product => product.item_code !== item.item_code)]);
-    setIsEditModalOpen(false);
+  const handleEditComplete = (product: Product) => {
+    setProductTable(productTable.map(p => p.item_code === product.item_code ? product : p));
+    setIsQRCodeModalOpen(false);
     setSelectedItem(null);
+  //   // 商品編集後、最新の在庫一覧を取得
+  //   const headers = getAuthHeaders();
+  //   apiGet(`/inventory/${product.item_code}`, headers).then(response => {
+  //     if (!response.ok) {
+  //       throw new Error('Inventory fetch failed');
+  //     }
+  //     return response.json();
+  //   }).then((data: Product) => {
+  //     setProductTable(productTable.map(p => p.item_code === data.item_code ? data : p));
+  //   });
+  //   // fetch("/inventory/", { headers })
+  //   //   .then(res => res.json())
+  //   //   .then(data => setProductTable(data))
+  //   //   .catch(error => console.error("Error fetching product table:", error));
+  //   setIsEditModalOpen(false);
+  //   setSelectedItem(null);
   };
 
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedItem(null);
-  };
+  // const handleCloseEditModal = () => {
+  //   setIsEditModalOpen(false);
+  //   setSelectedItem(null);
+  // };
 
   return (
     <div>
@@ -98,28 +114,37 @@ function InventoryView({
         productTable={productTable}
         filter={product => product.item_name.toLowerCase().includes(itemName.toLowerCase())}
         setItemQuery={setItemName}
-        handleOpenModal={handleOpenModal}
+        handleOpenModal={handleOpenQRCodeModal}
       />
 
       <div style={{ marginTop: "20px", textAlign: "center" }}>  
-        <button id="addProduct" className="btn btn-success" onClick={() => addProduct(itemName)}>
+        <button 
+          className="btn btn-success" 
+          onClick={() => setIsAddProductModalOpen(true)}
+        >
           ➕ 新規商品追加
         </button>
       </div>
       
-      <QRCodeModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-        item={selectedItem}
+      {/* 新規商品追加モーダル */}
+      <AddProductModal
+        isOpen={isAddProductModalOpen}
+        onClose={() => setIsAddProductModalOpen(false)}
+        onAdd={handleAddProduct}
       />
-      <EditModal
-        item={selectedItem}
-        isOpen={isEditModalOpen}
-        onClose={handleCloseEditModal}
-        onEdit={handleEditComplete}
-      />
+      
+      {/* QRコード表示モーダル */}
+      {selectedItem && (
+        <QRCodeDisplayModal
+          product={selectedItem}
+          isOpen={isQRCodeModalOpen}
+          onClose={() => {
+            setIsQRCodeModalOpen(false);
+            // setSelectedItem(null);
+          }}
+          onSave={handleEditComplete}
+        />
+      )}
     </div>
   );
 }

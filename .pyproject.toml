@@ -1,0 +1,23 @@
+[project]
+name = "inventory-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "authlib>=1.6.0",
+    "fastapi>=0.115.12",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "pandas>=2.3.1",
+    "pandasql>=0.7.3",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.1.0",
+    "sqlalchemy>=2.0.41",
+    "uvicorn[standard]>=0.34.3",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]

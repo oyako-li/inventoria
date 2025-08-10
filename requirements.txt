@@ -1,0 +1,9 @@
+fastapi
+jinja2
+httpx
+uvicorn
+pandas
+pandasql
+sqlalchemy
+python-dotenv
+psycopg2-binary

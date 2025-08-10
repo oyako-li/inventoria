@@ -1,10 +1,10 @@
-export type ActionType = 'in' | 'out';
+export type ActionType = 'IN' | 'OUT';
 
 export interface Product {
   item_code: string;
   item_name: string;
-  item_quantity?: number;
-  current_stock?: number;
+  item_quantity: number;
+  // current_stock?: number;
   updated_at: string;
   updated_by: string;
 } 

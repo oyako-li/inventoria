@@ -1,10 +1,20 @@
+/* 全体のスクロール防止 */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 1200px;
-    margin: auto;
     background: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .header {
@@ -12,12 +22,24 @@
     color: white;
     padding: 30px;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.title-text {
+    white-space: nowrap;
 }
 
 .sub-header {
@@ -32,6 +54,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 30px;
+    box-sizing: border-box;
 }
 
 .scanner-section, .inventory-section {
@@ -184,33 +207,199 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* @media (max-width: 768px) {
-    
+/* レスポンシブテーブル */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.table-responsive table {
+  min-width: 600px;
+}
+
+/* モバイルカード */
+.mobile-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* スクロールバーのスタイル */
+.mobile-cards::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-cards::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.mobile-cards::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.mobile-cards::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.mobile-card {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-card:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+
+.qr-code, .transaction-id, .supplier-code {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.card-row .label {
+  font-weight: 500;
+  color: #666;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+.card-row .value {
+  color: #333;
+  font-size: 14px;
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
     .header h1 {
         font-size: 2em;
+        line-height: 1.2;
+        gap: 8px;
+    }
+    
+    .header {
+        padding: 20px;
     }
     
     .container {
-        margin: 10px;
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        padding: 20px;
+        min-height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-cards {
+        max-height: 50vh;
+        flex: 1;
+    }
+
+    .modal-overlay {
+        padding: 10px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .info-value {
+        text-align: left;
+    }
+}
+
+    .tab-buttons {
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .tab-buttons .tab-btn {
         padding: 8px 12px;
         font-size: 0.9em;
+        flex: 1;
+        min-width: 120px;
     }
 
     .modal-content {
         padding: 15px;
         width: 95%;
+        margin: 10px;
     }
 
     .modal-actions {
         flex-direction: column;
+        gap: 10px;
     }
 
     .modal-actions .btn {
         width: 100%;
-        margin: 5px 0;
+        margin: 0;
     }
 
     .inventory-controls-container {
@@ -222,13 +411,93 @@
     .inventory-controls-container .search-form {
         margin-right: 0;
     }
-} */
+
+    .pagination-controls {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .pagination-controls button {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8em;
+        line-height: 1.1;
+        gap: 6px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+
+    .container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        padding: 15px;
+        min-height: calc(100vh - 100px);
+    }
+
+    .tab-buttons .tab-btn {
+        font-size: 0.8em;
+        padding: 6px 8px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .card-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .card-row .value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 360px) {
+    .header h1 {
+        font-size: 1.6em;
+        line-height: 1.1;
+        gap: 4px;
+    }
+
+    .header {
+        padding: 10px;
+    }
+
+    .main-content {
+        padding: 10px;
+        min-height: calc(100vh - 80px);
+    }
+
+    .tab-buttons .tab-btn {
+        font-size: 0.7em;
+        padding: 4px 6px;
+    }
+}
 
 .tab-buttons {
     display: flex;
     margin-bottom: 20px;
     justify-content: center;
     gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
 }
 .tab-btn {
     padding: 10px 30px;
@@ -262,22 +531,349 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-content {
     background-color: #fff;
-    padding: 20px;
     border-radius: 8px;
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-mobile {
+    max-width: 100%;
+    max-height: 95vh;
+    margin: 0;
+    border-radius: 0;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
 }
 
 .modal-title {
-    font-size: 1.8em;
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-info {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.9em;
+}
+
+.info-label {
+    color: #666;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.info-value {
+    color: #333;
+    text-align: right;
+    flex: 1;
+    word-break: break-word;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* QRコードモーダル用スタイル */
+.qr-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.qr-info h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.qr-info svg {
+    margin: 20px auto;
+    display: block;
+}
+
+.qr-info .copyable-text {
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #1976d2;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.qr-info .copyable-text:hover {
+    background-color: #e3f2fd;
+}
+
+/* QRスキャナーモーダル用スタイル */
+.scanner-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.scanner-video {
+    width: 100%;
+    height: 300px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    background: #000;
+}
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.scan-region {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+.scanner-status {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.scanner-status p {
+    color: #333;
+    font-size: 14px;
+    margin: 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+/* スキャンされた商品情報表示 */
+.scanned-item-info {
+    margin: 15px 0;
+    padding: 15px;
+    background: #e8f5e8;
+    border: 1px solid #4caf50;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.scanned-item-info p {
+    margin: 0;
+    color: #2e7d32;
+    font-size: 16px;
+}
+
+.scanned-item-info strong {
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+/* QRコード表示モーダル用スタイル */
+.qr-display-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.product-info {
+    margin-bottom: 20px;
+}
+
+.product-info h3 {
     color: #2c3e50;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
+    font-size: 1.3em;
+}
+
+.product-info p {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 1em;
+}
+
+.qr-code-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.qr-code-container svg {
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    background: white;
+}
+
+.item-code-info {
+    margin-top: 20px;
+}
+
+.item-code-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+}
+
+.copyable-text {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+    transition: background-color 0.2s;
+}
+
+.copyable-text:hover {
+    background-color: #e9ecef;
+}
+
+/* QRコード表示モーダル用のcopyable-textスタイル */
+.qr-display-container .copyable-text {
+    color: #2c3e50;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+    transition: background-color 0.2s;
+}
+
+.qr-display-container .copyable-text:hover {
+    background-color: #e9ecef;
+}
+
+.copy-icon {
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.copy-hint {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin: 5px 0 0 0;
+}
+
+/* カードアクションとテーブルアクション用スタイル */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.table-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .modal-subtitle {
@@ -317,16 +913,7 @@
     }
 }
 
-.copyable-text {
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
 
-.copyable-text:hover {
-    background-color: #f0f0f0;
-}
 
 .inventory-controls-container {
     display: flex;
@@ -346,15 +933,89 @@
     align-items: center;
     gap: 10px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .pagination-controls button {
     padding: 8px 16px;
     border-radius: 20px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    min-width: 60px;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #ccc;
+}
+
+.pagination-controls button:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
 }
 
 .pagination-controls span {
     font-weight: bold;
     color: #2c3e50;
     white-space: nowrap;
+    font-size: 14px;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .pagination-controls {
+        gap: 8px;
+    }
+    
+    .pagination-controls button {
+        padding: 6px 12px;
+        font-size: 13px;
+        min-width: 50px;
+    }
+    
+    .pagination-controls span {
+        font-size: 13px;
+        min-width: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-controls {
+        gap: 6px;
+    }
+    
+    .pagination-controls button {
+        padding: 5px 10px;
+        font-size: 12px;
+        min-width: 45px;
+    }
+    
+    .pagination-controls span {
+        font-size: 12px;
+        min-width: 45px;
+    }
+}
+
+@media (max-width: 360px) {
+    .pagination-controls {
+        gap: 4px;
+    }
+    
+    .pagination-controls button {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-width: 40px;
+    }
+    
+    .pagination-controls span {
+        font-size: 11px;
+        min-width: 40px;
+    }
 }

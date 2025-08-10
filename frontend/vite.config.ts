@@ -14,8 +14,12 @@ export default defineConfig({
     host: '0.0.0.0', // Dockerコンテナ内で外部からアクセス可能にする
     port: 5173,
     proxy: {
-      '/item': 'http://backend:8000',
-      '/inventory': 'http://backend:8000',
+      '/api': 'http://localhost:8000',
+      '/item': 'http://localhost:8000',
+      '/inventory': 'http://localhost:8000',
+      '/transaction': 'http://localhost:8000',
+      '/supplier': 'http://localhost:8000',
+      '/teams': 'http://localhost:8000',
     }
   }
 })

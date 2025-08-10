@@ -1,28 +1,30 @@
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-      - db_data:/data
-    environment:
-      - WATCHFILES_FORCE_POLLING=true
-      - DB_PATH=../data/inventory.db
-
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.frontend
+      context: ./.devcontainer
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+      - backend_venv:/workspace/backend/.venv
+    working_dir: /workspace
+    command: bash ./scripts/dev.sh
     ports:
       - "5173:5173"
+      - "8000:8000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app
-      - /app/node_modules # 開発用にnode_modulesをマウント対象から除外
-    depends_on:
-      - backend 
+      - ./backend:/workspace/backend:rw
+      - backend_venv:/workspace/backend/.venv
+
+    working_dir: /workspace/backend
+    # ports:
+    #   - "8000:8000"
 
 volumes:
-  db_data: 
+  backend_venv:

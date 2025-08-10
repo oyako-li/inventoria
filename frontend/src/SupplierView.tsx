@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Supplier, ActionType, Product } from "./types";
+import { useAuth } from "./contexts/AuthContext";
 import SupplierTable from "./components/Supplier";
 import SupplierModal from "./components/SupplierModal";
 import "./components/Inventory.css";
@@ -11,13 +12,14 @@ interface SupplierViewProps {
 }
 
 function SupplierView({ productTable , supplierTable, setSupplierTable}: SupplierViewProps) {
+  const { getAuthHeaders } = useAuth();
   const [itemName, setItemName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Supplier | null>(null);
-  const [supplierType, setSupplierType] = useState<ActionType>("in");
+  const [supplierType, setSupplierType] = useState<ActionType>("IN");
 
-  const handleOpenModal = (supplier: Supplier) => {
-    setSelectedItem(supplier);
+  const handleOpenModal = (supplier?: Supplier) => {
+    setSelectedItem(supplier || null);
     setIsModalOpen(true);
   };
 
@@ -26,55 +28,15 @@ function SupplierView({ productTable , supplierTable, setSupplierTable}: Supplie
     setSelectedItem(null);
   };
 
-  // const handleDelete = () => {
-  //   fetch(`/supplier/${selectedItem?.supplier_code}`, {
-  //     method: "DELETE",
-  //   })
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     console.log(data);
-  //     alert("削除しました。");
-  //     handleCloseModal();
-  //     setSupplierTable(supplierTable.filter(supplier => supplier.supplier_code !== selectedItem?.supplier_code));
-  //     setItemName("");
-  //   });
-  // };
 
-  function addSupplier(name: string) {
-    const item_name = name.trim();
-    if (item_name === "") {
-      alert("商品名を入力してください。");
-      return;
-    }
-    fetch("/supplier/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        supplier_name: item_name,
-        supplier_type: supplierType,
-        updated_by: "admin",
-      }),
-    })
-      .then((res) => res.json())
-      .then((newItem) => {
-        console.log(newItem);
-        setSupplierTable([newItem, ...supplierTable]);
-        setItemName(""); // 入力欄をクリア
-      })
-      .catch((error) => {
-        alert(`顧客追加に失敗しました。${error.message}`);
-      });
-  }
 
-  const handleSupplierComplete = (item: Supplier) => {
-    setSupplierTable([
-      {
-        ...item,
-      },
-      ...supplierTable.filter(
-        (supplier) => supplier.supplier_code !== item.supplier_code
-      ),
-    ]);
+  const handleSupplierComplete = () => {
+    // 顧客編集後、最新のデータを取得
+    const headers = getAuthHeaders();
+    fetch("/supplier/", { headers })
+      .then(res => res.json())
+      .then(data => setSupplierTable(data))
+      .catch(error => console.error("Error fetching suppliers:", error));
     setIsModalOpen(false);
     setSelectedItem(null);
   };
@@ -83,8 +45,8 @@ function SupplierView({ productTable , supplierTable, setSupplierTable}: Supplie
     <div>
       <h2 className="section-title">🚚 顧客一覧</h2>
       <select value={supplierType} onChange={(e) => setSupplierType(e.target.value as ActionType)}>
-        <option value="in">仕入先</option>
-        <option value="out">出荷先</option>
+        <option value="IN">仕入先</option>
+        <option value="OUT">出荷先</option>
       </select>
 
       <SupplierTable
@@ -103,7 +65,7 @@ function SupplierView({ productTable , supplierTable, setSupplierTable}: Supplie
         <button
           id="addSupplier"
           className="btn btn-success"
-          onClick={() => addSupplier(itemName)}
+          onClick={() => handleOpenModal()}
         >
           ➕ 新規顧客追加
         </button>
